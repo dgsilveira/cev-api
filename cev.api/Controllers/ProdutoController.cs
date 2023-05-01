@@ -66,7 +66,7 @@ namespace cev.api.Controllers
         }
 
         [HttpPatch]
-        [Route("/atualiza-descricao/{id}")]
+        [Route("/atualizar-descricao/{id}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -81,7 +81,7 @@ namespace cev.api.Controllers
         }
 
         [HttpPatch]
-        [Route("/atualiza-valor/{id}")]
+        [Route("/atualizar-valor/{id}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -96,7 +96,7 @@ namespace cev.api.Controllers
         }
 
         [HttpPatch]
-        [Route("/atualiza-estoque/{id}/{estoque}")]
+        [Route("/atualizar-estoque/{id}/{estoque}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
