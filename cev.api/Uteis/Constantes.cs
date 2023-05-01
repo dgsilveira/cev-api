@@ -31,7 +31,8 @@ namespace cev.api.Uteis
             public const string PRODUTO_DUPLICADO = "Produto duplicado.";
             public const string PRODUTO_NAO_ENCONTRADO = "Produto não encontrado.";
             public const string VALOR_PRODUTO_INVALIDO = "Valor Produto inválido.";
-            public const string QUANTIDADE = "Quantidade inválida.";
+            public const string QUANTIDADE_INVALIDA = "Quantidade inválida.";
+            public const string QUANTIDADE_INSUFICIENTE = "Não é possível remover a quantidade solicitada do estoque! Estoque abaixo do solicitado.";
         }
 
         public static class Vendas

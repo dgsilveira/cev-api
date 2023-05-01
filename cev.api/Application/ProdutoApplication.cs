@@ -6,6 +6,7 @@ using Flunt.Notifications;
 using cev.api.Data;
 using cev.api.Uteis;
 using cev.api.Domain.Entidades;
+using cev.api.Domain.Enums;
 
 namespace cev.api.Application
 {
@@ -18,7 +19,7 @@ namespace cev.api.Application
             _appDbContext = appDbContext;
         }
 
-        public Result<ProdutoLeitura> AtualizarDescricao(int id, string descricao)
+        public Result<ProdutoLeitura> AtualizarDescricao(int id, string descricao, double valor)
         {
             List<Notification> notifications = new List<Notification>();
             if (id < 0)
@@ -27,6 +28,8 @@ namespace cev.api.Application
                 notifications.Add(new Notification(nameof(descricao), Constantes.Entidades.DESCRICAO_NULA_OU_VAZIA));
             if (descricao.Length > 50)
                 notifications.Add(new Notification(nameof(descricao), Constantes.Entidades.DESCRICAO_INVALIDA));
+            if (valor < 0)
+                notifications.Add(new Notification(nameof(valor), Constantes.Entidades.VALOR_INVALIDO));
 
             if (notifications.Any())
                 return Result<ProdutoLeitura>.Error(notifications.AsReadOnly());
@@ -40,32 +43,6 @@ namespace cev.api.Application
                 return Result<ProdutoLeitura>.Error(new Notification(nameof(ProdutoLeitura), Constantes.Produtos.PRODUTO_NAO_ENCONTRADO));
 
             modelDb.Descricao = descricao;
-
-            _appDbContext.SaveChanges();
-            return Result<ProdutoLeitura>.Ok(new ProdutoLeitura
-            {
-                Id = modelDb.Id,
-                Descricao = modelDb.Descricao,
-                Estoque = modelDb.Estoque,
-                Valor = modelDb.Valor
-            });
-        }
-
-        public Result<ProdutoLeitura> AtualizarValor(int id, double valor)
-        {
-            List<Notification> notifications = new List<Notification>();
-            if (id < 0)
-                notifications.Add(new Notification(nameof(id), Constantes.Entidades.ID_INVALIDO));
-            if (valor < 0)
-                notifications.Add(new Notification(nameof(valor), Constantes.Entidades.VALOR_INVALIDO));
-
-            if (notifications.Any())
-                return Result<ProdutoLeitura>.Error(notifications.AsReadOnly());
-
-            var modelDb = _appDbContext.Produtos.Find(id);
-            if (modelDb == null)
-                return Result<ProdutoLeitura>.Error(new Notification(nameof(ProdutoLeitura), Constantes.Produtos.PRODUTO_NAO_ENCONTRADO));
-
             modelDb.Valor = valor;
 
             _appDbContext.SaveChanges();
@@ -78,13 +55,13 @@ namespace cev.api.Application
             });
         }
 
-        public Result<ProdutoLeitura> AtualizarEstoque(int id, int estoque)
+        public Result<ProdutoLeitura> AtualizarEstoque(int id, TipoAtualizacao tipoAtualizacao, int valor)
         {
             List<Notification> notifications = new List<Notification>();
             if (id < 0)
                 notifications.Add(new Notification(nameof(id), Constantes.Entidades.ID_INVALIDO));
-            if (estoque < 0)
-                notifications.Add(new Notification(nameof(estoque), Constantes.Entidades.ESTOQUE_INVALIDO));
+            if (valor < 0)
+                notifications.Add(new Notification(nameof(valor), Constantes.Entidades.ESTOQUE_INVALIDO));
 
             if (notifications.Any())
                 return Result<ProdutoLeitura>.Error(notifications.AsReadOnly());
@@ -93,7 +70,13 @@ namespace cev.api.Application
             if (modelDb == null)
                 return Result<ProdutoLeitura>.Error(new Notification(nameof(ProdutoLeitura), Constantes.Produtos.PRODUTO_NAO_ENCONTRADO));
 
-            modelDb.Estoque = estoque;
+            if (tipoAtualizacao == TipoAtualizacao.Sub && ((modelDb.Estoque - valor) < 0))
+                return Result<ProdutoLeitura>.Error(new Notification(nameof(ProdutoAtualizarEstoque.Valor), Constantes.Produtos.QUANTIDADE_INSUFICIENTE));
+            
+            if (tipoAtualizacao == TipoAtualizacao.Add)
+                modelDb.Estoque += valor;
+            if (tipoAtualizacao == TipoAtualizacao.Sub)
+                modelDb.Estoque -= valor;
 
             _appDbContext.SaveChanges();
             return Result<ProdutoLeitura>.Ok(new ProdutoLeitura
