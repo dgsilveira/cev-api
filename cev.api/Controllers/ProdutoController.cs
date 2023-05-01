@@ -1,4 +1,5 @@
-﻿using cev.api.Domain.Interfaces;
+﻿using cev.api.Domain.Enums;
+using cev.api.Domain.Interfaces;
 using cev.api.Domain.ModelsApi;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,14 +66,13 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [HttpPatch]
-        [Route("/atualizar-descricao/{id}")]
+        [HttpPatch("{id}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult AtualizarDescricao([FromRoute] int id, [FromBody] string descricao)
+        public IActionResult AtualizarDescricao([FromRoute] int id, [FromBody] ProdutoAtualizar produtoAtualizar)
         {
-            var resultado = _produtoApplication.AtualizarDescricao(id, descricao);
+            var resultado = _produtoApplication.AtualizarDescricao(id, produtoAtualizar.Descricao, produtoAtualizar.Valor);
 
             if (resultado.Invalid)
                 return BadRequest(resultado.Notifications);
@@ -81,28 +81,13 @@ namespace cev.api.Controllers
         }
 
         [HttpPatch]
-        [Route("/atualizar-valor/{id}")]
+        [Route("/atualizar-estoque/{id}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult AtualizarValor(int id, [FromBody] double valor)
+        public IActionResult AtualizarValor([FromRoute] int id, [FromBody] ProdutoAtualizarEstoque produtoAtualizarEstoque)
         {
-            var resultado = _produtoApplication.AtualizarValor(id, valor);
-
-            if (resultado.Invalid)
-                return BadRequest(resultado.Notifications);
-
-            return Ok(resultado.Object);
-        }
-
-        [HttpPatch]
-        [Route("/atualizar-estoque/{id}/{estoque}")]
-        [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult AtualizarValor([FromRoute] int id, [FromRoute] int estoque)
-        {
-            var resultado = _produtoApplication.AtualizarEstoque(id, estoque);
+            var resultado = _produtoApplication.AtualizarEstoque(id, produtoAtualizarEstoque.TipoAtualizacao, produtoAtualizarEstoque.Valor);
 
             if (resultado.Invalid)
                 return BadRequest(resultado.Notifications);
