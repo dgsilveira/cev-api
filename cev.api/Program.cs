@@ -17,6 +17,21 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Conf
 
 var app = builder.Build();
 
+//Cors https://learn.microsoft.com/pt-br/aspnet/core/security/cors?view=aspnetcore-6.0
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://puc-front.vercel.app/products",
+                                              "https://puc-front.vercel.app/");
+                      });
+});
+
+app.UseCors(MyAllowSpecificOrigins);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
