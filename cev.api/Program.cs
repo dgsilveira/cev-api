@@ -15,7 +15,6 @@ builder.Services.RegisterApplications(builder.Configuration);
 
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("CevConnection")));
 
-var app = builder.Build();
 
 //Cors https://learn.microsoft.com/pt-br/aspnet/core/security/cors?view=aspnetcore-6.0
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -29,6 +28,8 @@ builder.Services.AddCors(options =>
                                               "https://puc-front.vercel.app/");
                       });
 });
+
+var app = builder.Build();
 
 app.UseCors(MyAllowSpecificOrigins);
 
