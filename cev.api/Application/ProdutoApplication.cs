@@ -34,7 +34,7 @@ namespace cev.api.Application
             if (notifications.Any())
                 return Result<ProdutoLeitura>.Error(notifications.AsReadOnly());
 
-            var duplicado = _appDbContext.Produtos.FirstOrDefault(p => p.Descricao == descricao);
+            var duplicado = _appDbContext.Produtos.FirstOrDefault(p => p.Descricao == descricao && p.Id != id);
             if (null != duplicado)
                 return Result<ProdutoLeitura>.Error(new Notification(nameof(ProdutoLeitura), Constantes.Produtos.PRODUTO_DUPLICADO));
 
