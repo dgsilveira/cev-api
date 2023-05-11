@@ -9,7 +9,7 @@ namespace cev.api.Domain.Interfaces
         Result<ProdutoLeitura> Inserir(ProdutoCriar produtoCriar);
         Result<List<ProdutoLeitura>> Listar();
         Result<ProdutoLeitura> RecuperarPorId(int id);
-        public Result<ProdutoLeitura> AtualizarDescricao(int id, string descricao, double valor);
+        public Result<ProdutoLeitura> Atualizar(int id, string descricao, double valor);
         public Result<ProdutoLeitura> AtualizarEstoque(int id, TipoAtualizacao tipoAtualizacao,  int valor);
         Result Excluir(int id);
     }

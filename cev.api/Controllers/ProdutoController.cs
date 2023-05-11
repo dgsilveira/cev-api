@@ -70,9 +70,9 @@ namespace cev.api.Controllers
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult AtualizarDescricao([FromRoute] int id, [FromBody] ProdutoAtualizar produtoAtualizar)
+        public IActionResult Atualizar([FromRoute] int id, [FromBody] ProdutoAtualizar produtoAtualizar)
         {
-            var resultado = _produtoApplication.AtualizarDescricao(id, produtoAtualizar.Descricao, produtoAtualizar.Valor);
+            var resultado = _produtoApplication.Atualizar(id, produtoAtualizar.Descricao, produtoAtualizar.Valor);
 
             if (resultado.Invalid)
                 return BadRequest(resultado.Notifications);
