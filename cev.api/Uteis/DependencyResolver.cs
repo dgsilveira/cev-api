@@ -8,6 +8,7 @@ namespace cev.api.Uteis
         public static IServiceCollection RegisterApplications(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IProdutoApplication, ProdutoApplication>();
+            services.AddScoped<IVendedorApplication, VendedorApplication>();
             return services;
         }
     }

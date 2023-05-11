@@ -11,5 +11,6 @@ namespace cev.api.Data
         }
 
         public DbSet<ProdutoDb> Produtos { get; set; }
+        public DbSet<VendedorDb> Vendedores { get; set; }
     }
 }
