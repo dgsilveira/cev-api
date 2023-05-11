@@ -19,7 +19,7 @@ namespace cev.api.Application
             _appDbContext = appDbContext;
         }
 
-        public Result<ProdutoLeitura> AtualizarDescricao(int id, string descricao, double valor)
+        public Result<ProdutoLeitura> Atualizar(int id, string descricao, double valor)
         {
             List<Notification> notifications = new List<Notification>();
             if (id < 0)
