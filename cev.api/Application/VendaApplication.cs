@@ -31,16 +31,16 @@ namespace cev.api.Application
             return Result.Ok();
         }
 
-        //TODO: Estou nesse
         public Result<VendaLeitura> Inserir(VendaCriar vendaCriar)
         {
-            var produtos = verificarQuantidadeProdutos(vendaCriar.Produtos);
-
-
             var entidade = VendaCriarParaVenda(vendaCriar);
 
             if (entidade.Invalid)
                 return Result<VendaLeitura>.Error(entidade.Notifications);
+
+            var quantidadeErros = verificarQuantidadeProdutosDisponivel(vendaCriar.Produtos);
+            if (quantidadeErros.Any())
+                return Result<VendaLeitura>.Error(quantidadeErros);
 
             var modelsDb = VendaParaListVendaDb(entidade);
 
@@ -49,6 +49,8 @@ namespace cev.api.Application
                 _appDbContext.Vendas.Add(model);
                 _appDbContext.SaveChanges();
             }
+
+            BaixarEstoque(entidade.Produtos);
 
             return Result<VendaLeitura>.Ok(ListVendaDbParaVendaLeitura(modelsDb));
         }
@@ -76,19 +78,35 @@ namespace cev.api.Application
         }
 
         #region Métodos Privados
-
-        private bool verificarQuantidadeProdutos(IReadOnlyCollection<VendaProdutoCriar> produtos)
+        private void BaixarEstoque(IReadOnlyCollection<VendaProduto> produtos)
         {
-            return null;
+            foreach (var produto in produtos)
+            {
+                _appDbContext.Produtos.Find(produto.ProdutoId).Estoque -= produto.Quantidade;
+                _appDbContext.SaveChanges();
+            }
+        }
+
+        private List<Notification> verificarQuantidadeProdutosDisponivel(IReadOnlyCollection<VendaProdutoCriar> produtos)
+        {
+            List<Notification> notifications = new List<Notification>();
+
+            foreach (var produto in produtos)
+            {
+                var produtoDb = _appDbContext.Produtos.Find(produto.ProdutoId);
+                if (produtoDb.Estoque < produto.Quantidade)
+                    notifications.Add(new Notification(nameof(Produto), $"{Constantes.Produtos.QUANTIDADE_INSUFICIENTE} Produto: {produtoDb.Descricao}, Quantidade Solicitada: {produto.Quantidade}"));
+            }
+            return notifications;
         }
         private Venda VendaCriarParaVenda(VendaCriar vendaCriar)
         {
             return new Venda
                 (
-                    buscarUltimoValor(),
+                    BuscarUltimoValor(),
                     vendaCriar.DataVenda,
                     vendaCriar.FormaPagamento,
-                    VendedorDbParaVendedor(_appDbContext.Vendedores.Find(vendaCriar.VendedorId)),
+                    VendedorDbParaVendedor(vendaCriar.VendedorId),
                     ListVendaProdutoCriarParaListVendaProduto(vendaCriar.Produtos).AsReadOnly()
                 );
         }
@@ -124,9 +142,19 @@ namespace cev.api.Application
         }
 
 
-        private Vendedor VendedorDbParaVendedor(VendedorDb vendedorDb)
+        private Vendedor VendedorDbParaVendedor(int vendedorId)
         {
-            return new Vendedor(vendedorDb.Id, vendedorDb.Nome);
+            var vendedorDb = _appDbContext.Vendedores.Find(vendedorId);
+
+            if (vendedorDb != null)
+                return new Vendedor(vendedorDb.Id, vendedorDb.Nome);
+
+            var erro = new Notification(nameof(Vendedor), Constantes.Vendedores.VENDEDOR_NAO_ENCONTRADO);
+
+            var vendedor = new Vendedor(vendedorDb.Nome);
+            vendedor.AddNotification(erro);
+
+            return vendedor;
         }
 
         private List<VendaDb> VendaParaListVendaDb(Venda venda)
@@ -166,19 +194,16 @@ namespace cev.api.Application
             foreach (var produto in produtos)
             {
                 var produtoDb = _appDbContext.Produtos.Find(produto.ProdutoId);
-                VendaProduto vendaProduto;
 
                 if (produtoDb == null)
                 {
-                    vendaProduto = new VendaProduto(produto.ProdutoId, 0, produto.Quantidade);
+                    VendaProduto vendaProduto = new VendaProduto(produto.ProdutoId, 0, produto.Quantidade);
                     vendaProduto
                         .AddNotification(nameof(produto.ProdutoId), Constantes.Entidades.ID_PRODUTO_INVALIDO);
                     vendaProdutos.Add(vendaProduto);
+                    break;
                 }
-                else
-                {
-                    vendaProdutos.Add(new VendaProduto(produto.ProdutoId, produtoDb.Valor, produto.Quantidade));
-                }
+                vendaProdutos.Add(new VendaProduto(produto.ProdutoId, produtoDb.Valor, produto.Quantidade));
             }
 
             return vendaProdutos;
@@ -200,7 +225,7 @@ namespace cev.api.Application
             return vendas;
         }
 
-        private int buscarUltimoValor()
+        private int BuscarUltimoValor()
         {
             var controle = _appDbContext.ControlesDiversos.FirstOrDefault(c => c.Id == 1);
 

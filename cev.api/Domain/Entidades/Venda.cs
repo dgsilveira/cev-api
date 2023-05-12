@@ -32,10 +32,13 @@ namespace cev.api.Domain.Entidades
             FormaPagamento = formaPagamento;
             Vendedor = vendedor;
             Produtos = produtos;
+
             if (dataVenda.Year < 2023)
                 AddNotification(nameof(dataVenda), Constantes.Entidades.DATA_INVALIDA);
+
             if ((int)formaPagamento < 1 || (int)formaPagamento > 4)
                 AddNotification(nameof(FormaPagamento), Constantes.Entidades.FORMA_PAGAMENTO_INVALIDO);
+
             AddNotifications(vendedor);
 
             foreach (var produto in produtos)
