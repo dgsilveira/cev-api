@@ -1,6 +1,7 @@
 ﻿using cev.api.Domain.Interfaces;
 using cev.api.Domain.ModelsApi;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace cev.api.Controllers
 {
@@ -34,9 +35,9 @@ namespace cev.api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult Listar()
+        public IActionResult Listar(string startDate, string endDate)
         {
-            var resultado = _vendaApplication.Listar();
+            var resultado = _vendaApplication.Listar(startDate, endDate);
 
             if (resultado.Invalid)
                 return BadRequest(resultado.Notifications);

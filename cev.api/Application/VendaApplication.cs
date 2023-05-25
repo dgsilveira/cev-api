@@ -6,6 +6,8 @@ using cev.api.Domain.ModelsDb;
 using cev.api.Uteis;
 using cev.api.Uteis.Results;
 using Flunt.Notifications;
+using Microsoft.IdentityModel.Tokens;
+using static cev.api.Uteis.Constantes;
 
 namespace cev.api.Application
 {
@@ -55,9 +57,32 @@ namespace cev.api.Application
             return Result<VendaLeitura>.Ok(ListVendaDbParaVendaLeitura(modelsDb));
         }
 
-        public Result<List<VendaLeitura>> Listar()
+        public Result<List<VendaLeitura>> Listar(string startDate, string endDate)
         {
-            var modelsDb = _appDbContext.Vendas.ToList();
+            if (SomenteUmaData(startDate, endDate))
+                return Result<List<VendaLeitura>>.Error(new Notification("Datas:", "Parametros incorretos!"));
+
+            if (startDate.IsNullOrEmpty() && endDate.IsNullOrEmpty())
+            {
+                var modelsDbSemData = _appDbContext.Vendas.ToList();
+
+                if (!modelsDbSemData.Any())
+                    return Result<List<VendaLeitura>>.Error(new Notification(nameof(VendaLeitura), Constantes.Vendas.VENDA_NAO_ENCONTRADA));
+
+                List<VendaLeitura> modelsLeituraSemData = ListVendaDbParaListVendaLeitura(modelsDbSemData);
+
+                return Result<List<VendaLeitura>>.Ok(modelsLeituraSemData);
+            }
+
+            DateTime dataInicial = default;
+            DateTime dataFinal = default;
+
+            if (ValidarInvalidas(startDate, endDate, out dataInicial, out dataFinal))
+                return Result<List<VendaLeitura>>.Error(new Notification("Datas:", "Valores incorretos!"));
+
+            dataFinal = dataFinal.AddDays(1);
+
+            var modelsDb = _appDbContext.Vendas.Where(v => v.DataVenda >= dataInicial &&  v.DataVenda <= dataFinal).ToList();
 
             if (!modelsDb.Any())
                 return Result<List<VendaLeitura>>.Error(new Notification(nameof(VendaLeitura), Constantes.Vendas.VENDA_NAO_ENCONTRADA));
@@ -65,6 +90,22 @@ namespace cev.api.Application
             List<VendaLeitura> modelsLeitura = ListVendaDbParaListVendaLeitura(modelsDb);
 
             return Result<List<VendaLeitura>>.Ok(modelsLeitura);
+        }
+
+        private bool ValidarInvalidas(string startDate, string endDate, out DateTime dataInicial, out DateTime dataFinal)
+        {
+            if (DateTime.TryParse(startDate, out dataInicial) && DateTime.TryParse(endDate, out dataFinal))
+                return false;
+            dataInicial = default;
+            dataFinal = default;
+            return true;
+        }
+
+        private bool SomenteUmaData(string startDate, string endDate)
+        {
+            if ((startDate == null && endDate != null) || (startDate != null && endDate == null))
+                return true;
+            return false;
         }
 
         public Result<VendaLeitura> RecuperarPorId(int id)
