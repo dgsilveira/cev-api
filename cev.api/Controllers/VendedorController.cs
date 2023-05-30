@@ -69,7 +69,7 @@ namespace cev.api.Controllers
         [ProducesResponseType(typeof(VendedorCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult Atualizar(int id, [FromBody] string nome)
+        public IActionResult Atualizar(int id, string nome)
         {
             var resultado = _vendedorApplication.AtualizarNome(id, nome);
 
