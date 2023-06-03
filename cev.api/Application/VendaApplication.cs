@@ -166,10 +166,12 @@ namespace cev.api.Application
                 });
             }
 
+            string nomeVendedor = _appDbContext.Vendedores.FirstOrDefault(v => v.Id == vendasDb[0].VendedorId)?.Nome;
+
             VendedorLeitura vendedorLeitura = new VendedorLeitura
             {
                 Id = vendasDb[0].VendedorId,
-                Nome = _appDbContext.Vendedores.Find(vendasDb[0].VendedorId).Nome
+                Nome = nomeVendedor != null ? nomeVendedor : "Rose Petrina"
             };
 
             return new VendaLeitura
