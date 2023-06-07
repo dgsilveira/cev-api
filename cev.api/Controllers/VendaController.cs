@@ -42,9 +42,6 @@ namespace cev.api.Controllers
             if (resultado.Invalid)
                 return BadRequest(resultado.Notifications);
 
-            if (resultado.Object.Count == 0)
-                return NoContent();
-
             return Ok(resultado.Object);
         }
 

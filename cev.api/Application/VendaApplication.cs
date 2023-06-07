@@ -67,7 +67,10 @@ namespace cev.api.Application
                 var modelsDbSemData = _appDbContext.Vendas.ToList();
 
                 if (!modelsDbSemData.Any())
-                    return Result<List<VendaLeitura>>.Error(new Notification(nameof(VendaLeitura), Constantes.Vendas.VENDA_NAO_ENCONTRADA));
+                {
+                    List<VendaLeitura> vendaLeituras = new List<VendaLeitura>();
+                    return Result<List<VendaLeitura>>.Ok(vendaLeituras);
+                }
 
                 List<VendaLeitura> modelsLeituraSemData = ListVendaDbParaListVendaLeitura(modelsDbSemData);
 
@@ -85,7 +88,10 @@ namespace cev.api.Application
             var modelsDb = _appDbContext.Vendas.Where(v => v.DataVenda >= dataInicial &&  v.DataVenda <= dataFinal).ToList();
 
             if (!modelsDb.Any())
-                return Result<List<VendaLeitura>>.Error(new Notification(nameof(VendaLeitura), Constantes.Vendas.VENDA_NAO_ENCONTRADA));
+            {
+                List<VendaLeitura> vendaLeituras = new List<VendaLeitura>();
+                return Result<List<VendaLeitura>>.Ok(vendaLeituras);
+            }
 
             List<VendaLeitura> modelsLeitura = ListVendaDbParaListVendaLeitura(modelsDb);
 
