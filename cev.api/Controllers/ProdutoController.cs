@@ -1,5 +1,6 @@
 ﻿using cev.api.Domain.Interfaces;
 using cev.api.Domain.ModelsApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace cev.api.Controllers
             _produtoApplication = produtoApplication;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -31,7 +32,7 @@ namespace cev.api.Controllers
             return Created("", resultado);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [ProducesResponseType(typeof(List<ProdutoLeitura>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -50,7 +51,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProdutoLeitura), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -69,7 +70,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPatch("{id}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -84,7 +85,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPatch]
         [Route("/atualizar-estoque/{id}")]
         [ProducesResponseType(typeof(ProdutoCriar), StatusCodes.Status201Created)]
@@ -100,7 +101,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]

@@ -1,5 +1,6 @@
 ﻿using cev.api.Domain.Interfaces;
 using cev.api.Domain.ModelsApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
@@ -17,7 +18,7 @@ namespace cev.api.Controllers
             _vendaApplication = vendaApplication;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         [ProducesResponseType(typeof(VendaCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -32,7 +33,7 @@ namespace cev.api.Controllers
             return Created("", resultado);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [ProducesResponseType(typeof(List<VendaLeitura>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -48,7 +49,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(VendaLeitura), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -67,7 +68,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
