@@ -1,5 +1,6 @@
 ﻿using cev.api.Domain.Interfaces;
 using cev.api.Domain.ModelsApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cev.api.Controllers
@@ -15,6 +16,7 @@ namespace cev.api.Controllers
             _vendedorApplication = vendedorApplication;
         }
 
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(VendedorCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -29,6 +31,7 @@ namespace cev.api.Controllers
             return Created("", resultado);
         }
 
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(List<VendedorLeitura>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -47,6 +50,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(VendedorLeitura), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -65,6 +69,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
+        [Authorize]
         [HttpPatch("{id}")]
         [ProducesResponseType(typeof(VendedorCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -79,6 +84,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
