@@ -1,5 +1,7 @@
 ﻿using cev.api.Domain.Interfaces;
 using cev.api.Domain.ModelsApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cev.api.Controllers
@@ -15,6 +17,7 @@ namespace cev.api.Controllers
             _vendedorApplication = vendedorApplication;
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         [ProducesResponseType(typeof(VendedorCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -29,6 +32,7 @@ namespace cev.api.Controllers
             return Created("", resultado);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [ProducesResponseType(typeof(List<VendedorLeitura>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -47,6 +51,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(VendedorLeitura), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -65,6 +70,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPatch("{id}")]
         [ProducesResponseType(typeof(VendedorCriar), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -79,6 +85,7 @@ namespace cev.api.Controllers
             return Ok(resultado.Object);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
